@@ -2,17 +2,13 @@ package trivia;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 // REFACTOR ME
 public class Game implements IGame {
    ArrayList<Player> players = new ArrayList<>();
-   int[] places = new int[6];
-   int[] purses = new int[6];
-   boolean[] inPenaltyBox = new boolean[6];
-
    private final Map<String, QuestionDeck> questionDecks = new HashMap<>();
+   private final Map<Integer, String> positionCategoryMap = new HashMap<>();
    int currentPlayer = 0;
    boolean isGettingOutOfPenaltyBox;
 
@@ -102,7 +98,7 @@ public class Game implements IGame {
       Player currentPlayer = players.get(this.currentPlayer);
       if (currentPlayer.isInPenaltyBox()) {
          if (isGettingOutOfPenaltyBox) {
-            System.out.println("Answer was corrent!!!!");
+            System.out.println("Answer was correct!!!!");
             currentPlayer.addGoldCoin();
             System.out.println(currentPlayer.getName() + " now has " + currentPlayer.getPurse() + " Gold Coins.");
             boolean winner = didPlayerWin();
@@ -113,7 +109,7 @@ public class Game implements IGame {
             return true;
          }
       } else {
-         System.out.println("Answer was corrent!!!!");
+         System.out.println("Answer was correct!!!!");
          currentPlayer.addGoldCoin();
          System.out.println(currentPlayer.getName() + " now has " + currentPlayer.getPurse() + " Gold Coins.");
          boolean winner = didPlayerWin();
