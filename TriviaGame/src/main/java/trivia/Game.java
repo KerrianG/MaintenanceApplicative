@@ -31,10 +31,6 @@ public class Game implements IGame {
       return "Rock Question " + index;
    }
 
-   public boolean isPlayable() {
-      return (howManyPlayers() >= 2);
-   }
-
    public boolean add(String playerName) {
       places[howManyPlayers()] = 1;
       purses[howManyPlayers()] = 0;
