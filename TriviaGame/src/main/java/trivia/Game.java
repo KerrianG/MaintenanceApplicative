@@ -1,7 +1,9 @@
 package trivia;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 // REFACTOR ME
 public class Game implements IGame {
@@ -10,25 +12,22 @@ public class Game implements IGame {
    int[] purses = new int[6];
    boolean[] inPenaltyBox = new boolean[6];
 
-   LinkedList<String> popQuestions = new LinkedList<>();
-   LinkedList<String> scienceQuestions = new LinkedList<>();
-   LinkedList<String> sportsQuestions = new LinkedList<>();
-   LinkedList<String> rockQuestions = new LinkedList<>();
-
+   private final Map<String, QuestionDeck> questionDecks = new HashMap<>();
    int currentPlayer = 0;
    boolean isGettingOutOfPenaltyBox;
 
    public Game() {
-      for (int i = 0; i < 50; i++) {
-         popQuestions.addLast("Pop Question " + i);
-         scienceQuestions.addLast(("Science Question " + i));
-         sportsQuestions.addLast(("Sports Question " + i));
-         rockQuestions.addLast(createRockQuestion(i));
-      }
-   }
+      questionDecks.put("Pop", new QuestionDeck());
+      questionDecks.put("Science", new QuestionDeck());
+      questionDecks.put("Sports", new QuestionDeck());
+      questionDecks.put("Rock", new QuestionDeck());
 
-   public String createRockQuestion(int index) {
-      return "Rock Question " + index;
+      for (int i = 0; i < 50; i++) {
+         questionDecks.get("Pop").addQuestion(new Question("Pop", "Pop Question " + i));
+         questionDecks.get("Science").addQuestion(new Question("Science", "Science Question " + i));
+         questionDecks.get("Sports").addQuestion(new Question("Sports", "Sports Question " + i));
+         questionDecks.get("Rock").addQuestion(new Question("Rock", "Rock Question " + i));
+      }
    }
 
    public boolean add(String playerName) {
@@ -83,28 +82,28 @@ public class Game implements IGame {
    }
 
    private void askQuestion() {
-      if (currentCategory().equals("Pop"))
-         System.out.println(popQuestions.removeFirst());
-      if (currentCategory().equals("Science"))
-         System.out.println(scienceQuestions.removeFirst());
-      if (currentCategory().equals("Sports"))
-         System.out.println(sportsQuestions.removeFirst());
-      if (currentCategory().equals("Rock"))
-         System.out.println(rockQuestions.removeFirst());
+      String category = currentCategory();
+        System.out.println(questionDecks.get(category).drawQuestion().getText());
    }
 
 
    private String currentCategory() {
-      if (places[currentPlayer] - 1 == 0) return "Pop";
-      if (places[currentPlayer] - 1 == 4) return "Pop";
-      if (places[currentPlayer] - 1 == 8) return "Pop";
-      if (places[currentPlayer] - 1 == 1) return "Science";
-      if (places[currentPlayer] - 1 == 5) return "Science";
-      if (places[currentPlayer] - 1 == 9) return "Science";
-      if (places[currentPlayer] - 1 == 2) return "Sports";
-      if (places[currentPlayer] - 1 == 6) return "Sports";
-      if (places[currentPlayer] - 1 == 10) return "Sports";
-      return "Rock";
+      switch (places[currentPlayer]) {
+         case 1:
+         case 5:
+         case 9:
+            return "Pop";
+         case 2:
+         case 6:
+         case 10:
+            return "Science";
+         case 3:
+         case 7:
+         case 11:
+            return "Sports";
+         default:
+            return "Rock";
+      }
    }
 
    public boolean handleCorrectAnswer() {
