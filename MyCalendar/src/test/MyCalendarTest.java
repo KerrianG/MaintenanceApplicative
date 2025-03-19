@@ -5,6 +5,8 @@ import main.Evenement.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.net.Proxy;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -83,5 +85,36 @@ public class MyCalendarTest {
                 List.of(), 0);
 
         assertTrue(calendarManager.conflit(event1, event2));
+    }
+
+    @Test
+    public void testAfficherEvenements() {
+        Event event1 = createEvent("REUNION", "Réunion de projet", "Alice",
+                LocalDateTime.of(2023, 10, 10, 10, 0), 60, "Salle de conférence",
+                List.of("Bob", "Charlie"), 0);
+
+        Event event2 = createEvent("RDV_PERSONNEL", "RDV médical", "Alice",
+                LocalDateTime.of(2023, 10, 11, 15, 0), 30, "Clinique",
+                List.of(), 0);
+
+        calendarManager.ajouterEvent(event1.type.getType(), event1.title.getTitre(), event1.proprietaire.getProprietaire(),
+                event1.dateDebut.getDateDebut(), event1.dureeMinutes.getDuree(), event1.lieu.getLieu(),
+                event1.participants.getParticipants(), event1.frequenceJours.getFrequence());
+
+        calendarManager.ajouterEvent(event2.type.getType(), event2.title.getTitre(), event2.proprietaire.getProprietaire(),
+                event2.dateDebut.getDateDebut(), event2.dureeMinutes.getDuree(), event2.lieu.getLieu(),
+                event2.participants.getParticipants(), event2.frequenceJours.getFrequence());
+
+        // Capture the output
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+
+        calendarManager.afficherEvenements();
+
+        String expectedOutput = event1.description() + System.lineSeparator() + event2.description() + System.lineSeparator();
+        assertEquals(expectedOutput, outContent.toString());
+
+        // Reset the standard output
+        System.setOut(System.out);
     }
 }

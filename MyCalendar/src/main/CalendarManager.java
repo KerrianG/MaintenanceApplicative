@@ -4,6 +4,7 @@ import main.Evenement.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 public class CalendarManager {
     public Evenements events;
@@ -25,11 +26,9 @@ public class CalendarManager {
 
     public Evenements eventsDansPeriode(LocalDateTime debut, LocalDateTime fin) {
         Evenements result = new Evenements();
-        for (Event e : events) {
-            if(e.type.isWithinPeriod(e, debut, fin)) {
-                result.addEvent(e);
-            }
-        }
+        StreamSupport.stream(events.spliterator(),false)
+                .filter(e -> e.type.isWithinPeriod(e, debut, fin))
+                .forEach(result::addEvent);
         return result;
     }
 
@@ -38,9 +37,7 @@ public class CalendarManager {
     }
 
     public void afficherEvenements() {
-        for (Event e : events) {
-            System.out.println(e.description());
-        }
+        events.forEach(e -> System.out.println(e.description()));
     }
 
 }
