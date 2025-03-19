@@ -5,6 +5,8 @@ public class Event {
     public static final String RDV_PERSONNEL = "RDV_PERSONNEL";
     public static final String REUNION = "REUNION";
     public static final String PERIODIQUE = "PERIODIQUE";
+    public static final String WEBINAR = "WEBINAR";
+
 
     public TypeEvenement type; // "RDV_PERSONNEL", "REUNION", "PERIODIQUE"
     public TitreEvenement title;

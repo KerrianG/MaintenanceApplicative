@@ -10,6 +10,7 @@ public class TypeEvenementRegistre {
         eventTypeMap.put(Event.RDV_PERSONNEL, new RdvPersonnel());
         eventTypeMap.put(Event.REUNION, new Reunion());
         eventTypeMap.put(Event.PERIODIQUE, new Periodique());
+        eventTypeMap.put(Event.WEBINAR, new Webinar());
     }
 
     public static TypeEvenement getEventType(String type) {
