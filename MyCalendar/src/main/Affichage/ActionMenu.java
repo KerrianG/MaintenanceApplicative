@@ -16,6 +16,7 @@ public class ActionMenu {
     private final CalendarManager calendar;
     private final Map<String, Supplier<Utilisateur>> actionsLog;
     private final Map<Integer, Runnable> actions;
+    private final Map<Integer, Runnable> visualisationActions;
 
     public ActionMenu(Scanner scanner, Utilisateurs utilisateurs, CalendarManager calendar) {
         this.scanner = scanner;
@@ -23,8 +24,18 @@ public class ActionMenu {
         this.calendar = calendar;
         this.actions = new HashMap<>();
         this.actionsLog = new HashMap<>();
+        this.visualisationActions = new HashMap<>();
         initializeActionsLog();
         initializeActions();
+        initializeVisualisationActions();
+    }
+
+    private void initializeVisualisationActions() {
+        visualisationActions.put(1, this::visualiserTousLesEvenements);
+        visualisationActions.put(2, this::visualiserEvenementsMois);
+        visualisationActions.put(3, this::visualiserEvenementsSemaine);
+        visualisationActions.put(4, this::visualiserEvenementsJour);
+        visualisationActions.put(5, () -> System.out.println("Retour au menu précédent"));
     }
 
     private void initializeActions() {
@@ -95,49 +106,11 @@ public class ActionMenu {
 
     private void visualiserEvenements() {
         int choixVisualisation = new AffichagePrincipal(scanner).afficherMenuVisualisation();
-        switch (choixVisualisation) {
-            case 1:
-                calendar.afficherEvenements();
-                break;
-            case 2:
-                System.out.print("Entrez l'année (AAAA) : ");
-                int anneeMois = Integer.parseInt(scanner.nextLine());
-                System.out.print("Entrez le mois (1-12) : ");
-                int mois = Integer.parseInt(scanner.nextLine());
-
-                LocalDateTime debutMois = LocalDateTime.of(anneeMois, mois, 1, 0, 0);
-                LocalDateTime finMois = debutMois.plusMonths(1).minusSeconds(1);
-
-                afficherListe(calendar.eventsDansPeriode(debutMois, finMois));
-                break;
-            case 3:
-                System.out.print("Entrez l'année (AAAA) : ");
-                int anneeSemaine = Integer.parseInt(scanner.nextLine());
-                System.out.print("Entrez le numéro de semaine (1-52) : ");
-                int semaine = Integer.parseInt(scanner.nextLine());
-
-                LocalDateTime debutSemaine = LocalDateTime.now()
-                        .withYear(anneeSemaine)
-                        .with(WeekFields.of(Locale.FRANCE).weekOfYear(), semaine)
-                        .with(WeekFields.of(Locale.FRANCE).dayOfWeek(), 1)
-                        .withHour(0).withMinute(0);
-                LocalDateTime finSemaine = debutSemaine.plusDays(7).minusSeconds(1);
-
-                afficherListe(calendar.eventsDansPeriode(debutSemaine, finSemaine));
-                break;
-            case 4:
-                System.out.print("Entrez l'année (AAAA) : ");
-                int anneeJour = Integer.parseInt(scanner.nextLine());
-                System.out.print("Entrez le mois (1-12) : ");
-                int moisJour = Integer.parseInt(scanner.nextLine());
-                System.out.print("Entrez le jour (1-31) : ");
-                int jour = Integer.parseInt(scanner.nextLine());
-
-                LocalDateTime debutJour = LocalDateTime.of(anneeJour, moisJour, jour, 0, 0);
-                LocalDateTime finJour = debutJour.plusDays(1).minusSeconds(1);
-
-                afficherListe(calendar.eventsDansPeriode(debutJour, finJour));
-                break;
+        Runnable action = visualisationActions.get(choixVisualisation);
+        if (action != null) {
+            action.run();
+        } else {
+            System.out.println("Choix non reconnu.");
         }
     }
 
@@ -225,5 +198,51 @@ public class ActionMenu {
                 System.out.println("- " + e.description());
             }
         }
+    }
+
+    private void visualiserTousLesEvenements() {
+        calendar.afficherEvenements();
+    }
+
+    private void visualiserEvenementsMois() {
+        System.out.print("Entrez l'année (AAAA) : ");
+        int anneeMois = Integer.parseInt(scanner.nextLine());
+        System.out.print("Entrez le mois (1-12) : ");
+        int mois = Integer.parseInt(scanner.nextLine());
+
+        LocalDateTime debutMois = LocalDateTime.of(anneeMois, mois, 1, 0, 0);
+        LocalDateTime finMois = debutMois.plusMonths(1).minusSeconds(1);
+
+        afficherListe(calendar.eventsDansPeriode(debutMois, finMois));
+    }
+
+    private void visualiserEvenementsSemaine() {
+        System.out.print("Entrez l'année (AAAA) : ");
+        int anneeSemaine = Integer.parseInt(scanner.nextLine());
+        System.out.print("Entrez le numéro de semaine (1-52) : ");
+        int semaine = Integer.parseInt(scanner.nextLine());
+
+        LocalDateTime debutSemaine = LocalDateTime.now()
+                .withYear(anneeSemaine)
+                .with(WeekFields.of(Locale.FRANCE).weekOfYear(), semaine)
+                .with(WeekFields.of(Locale.FRANCE).dayOfWeek(), 1)
+                .withHour(0).withMinute(0);
+        LocalDateTime finSemaine = debutSemaine.plusDays(7).minusSeconds(1);
+
+        afficherListe(calendar.eventsDansPeriode(debutSemaine, finSemaine));
+    }
+
+    private void visualiserEvenementsJour() {
+        System.out.print("Entrez l'année (AAAA) : ");
+        int anneeJour = Integer.parseInt(scanner.nextLine());
+        System.out.print("Entrez le mois (1-12) : ");
+        int moisJour = Integer.parseInt(scanner.nextLine());
+        System.out.print("Entrez le jour (1-31) : ");
+        int jour = Integer.parseInt(scanner.nextLine());
+
+        LocalDateTime debutJour = LocalDateTime.of(anneeJour, moisJour, jour, 0, 0);
+        LocalDateTime finJour = debutJour.plusDays(1).minusSeconds(1);
+
+        afficherListe(calendar.eventsDansPeriode(debutJour, finJour));
     }
 }
