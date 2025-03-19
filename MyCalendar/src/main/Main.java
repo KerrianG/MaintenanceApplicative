@@ -1,7 +1,7 @@
 package main;
 
-import main.Evenement.Event;
-import main.Evenement.Participant;
+import main.Evenement.*;
+import main.Utilisateur.*;
 
 import java.time.LocalDateTime;
 import java.time.temporal.WeekFields;
@@ -14,15 +14,12 @@ public class Main {
     public static void main(String[] args) {
         CalendarManager calendar = new CalendarManager();
         Scanner scanner = new Scanner(System.in);
-        String utilisateur = null;
+        Utilisateur utilisateur = null;
         boolean continuer = true;
 
-        String utilisateurs[] = new String[99];
-        String motsDePasses[] = new String[99];
-        int nbUtilisateurs = 0;
+        Utilisateurs utilisateurs = new Utilisateurs();
 
         while (true) {
-
             if (utilisateur == null) {
                 System.out.println("  _____         _                   _                __  __");
                 System.out.println(" / ____|       | |                 | |              |  \\/  |");
@@ -46,42 +43,29 @@ public class Main {
                 switch (scanner.nextLine()) {
                     case "1":
                         System.out.print("Nom d'utilisateur: ");
-                        utilisateur = scanner.nextLine();
+                        NomUtilisateur nomUtilisateur = new NomUtilisateur(scanner.nextLine());
+                        System.out.print("Mot de passe: ");
+                        MotDePasse motDePasse = new MotDePasse(scanner.nextLine());
 
-                        if (utilisateur.equals("Roger")) {
-                            String motDePasse = scanner.nextLine();
-                            if (!motDePasse.equals("Chat")) {
-                                utilisateur = null;
-                            }
-                        } else {
-                            if (utilisateur.equals("Pierre")) {
-                                String motDePasse = scanner.nextLine();
-                                if (!motDePasse.equals("KiRouhl")) {
-                                    utilisateur = null;
-                                }
-                            } else {
-                                System.out.print("Mot de passe: ");
-                                String motDePasse = scanner.nextLine();
-
-                                for (int i = 0; i < nbUtilisateurs; i = i + 1) {
-                                    if (utilisateurs[i].equals(utilisateur) && motsDePasses[i].equals(motDePasse)) {
-                                        utilisateur = utilisateurs[i];
-                                    }
-                                }
-                            }
+                        utilisateur = utilisateurs.trouverUtilisateur(nomUtilisateur, motDePasse);
+                        if (utilisateur == null) {
+                            System.out.println("Nom d'utilisateur ou mot de passe incorrect.");
                         }
                         break;
 
                     case "2":
                         System.out.print("Nom d'utilisateur: ");
-                        utilisateur = scanner.nextLine();
+                        nomUtilisateur = new NomUtilisateur(scanner.nextLine());
+                        if (utilisateurs.existeUtilisateur(nomUtilisateur)) {
+                            System.out.println("Nom d'utilisateur déjà pris.");
+                            break;
+                        }
                         System.out.print("Mot de passe: ");
-                        String motDePasse = scanner.nextLine();
+                        motDePasse = new MotDePasse(scanner.nextLine());
                         System.out.print("Répéter mot de passe: ");
-                        if (scanner.nextLine().equals(motDePasse)) {
-                            utilisateurs[nbUtilisateurs] = utilisateur;
-                            motsDePasses[nbUtilisateurs] = motDePasse;
-                            nbUtilisateurs = nbUtilisateurs + 1;
+                        if (scanner.nextLine().equals(motDePasse.getMotDePasse())) {
+                            utilisateur = new Utilisateur(nomUtilisateur, motDePasse);
+                            utilisateurs.ajouterUtilisateur(utilisateur);
                         } else {
                             System.out.println("Les mots de passes ne correspondent pas...");
                             utilisateur = null;
@@ -91,7 +75,7 @@ public class Main {
             }
 
             while (continuer && utilisateur != null) {
-                System.out.println("\nBonjour, " + utilisateur);
+                System.out.println("\nBonjour, " + utilisateur.getNomUtilisateur().getNom());
                 System.out.println("=== Menu Gestionnaire d'Événements ===");
                 System.out.println("1 - Voir les événements");
                 System.out.println("2 - Ajouter un rendez-vous perso");
@@ -180,7 +164,7 @@ public class Main {
                         System.out.print("Durée (en minutes) : ");
                         int duree = Integer.parseInt(scanner.nextLine());
 
-                        calendar.ajouterEvent("RDV_PERSONNEL", titre, utilisateur,
+                        calendar.ajouterEvent("RDV_PERSONNEL", titre, utilisateur.getNomUtilisateur().getNom(),
                                 LocalDateTime.of(annee, moisRdv, jourRdv, heure, minute), duree,
                                 "", null, 0);
 
@@ -206,26 +190,24 @@ public class Main {
                         System.out.println("Lieu :");
                         String lieu = scanner.nextLine();
 
-
                         List<Participant> participants = new ArrayList<>();
-                        participants.add(new Participant(utilisateur));
+                        participants.add(new Participant(utilisateur.getNomUtilisateur().getNom()));
 
                         boolean encore = true;
                         System.out.println("Ajouter un participant ? (oui / non)");
-                        while (scanner.nextLine().equals("oui"))
-                        {
+                        while (scanner.nextLine().equals("oui")) {
                             System.out.print("Participants : " + participants);
                             participants.add(new Participant(scanner.nextLine()));
                         }
 
-                        calendar.ajouterEvent("REUNION", titre2, utilisateur,
+                        calendar.ajouterEvent("REUNION", titre2, utilisateur.getNomUtilisateur().getNom(),
                                 LocalDateTime.of(annee2, moisRdv2, jourRdv2, heure2, minute2), duree2,
                                 lieu, participants, 0);
 
                         System.out.println("Événement ajouté.");
                         break;
 
-                        case "4":
+                    case "4":
                         // Ajout simplifié d'une réunion
                         System.out.print("Titre de l'événement : ");
                         String titre3 = scanner.nextLine();
@@ -242,7 +224,7 @@ public class Main {
                         System.out.print("Frequence (en jours) : ");
                         int frequence = Integer.parseInt(scanner.nextLine());
 
-                        calendar.ajouterEvent("PERIODIQUE", titre3, utilisateur,
+                        calendar.ajouterEvent("PERIODIQUE", titre3, utilisateur.getNomUtilisateur().getNom(),
                                 LocalDateTime.of(annee3, moisRdv3, jourRdv3, heure3, minute3), 0,
                                 "", null, frequence);
 
