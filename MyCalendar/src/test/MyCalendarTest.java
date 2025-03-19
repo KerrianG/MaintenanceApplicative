@@ -49,7 +49,12 @@ public class MyCalendarTest {
         assertEquals(LocalDateTime.of(2023, 10, 10, 10, 0), addedEvent.dateDebut.getDateDebut());
         assertEquals(60, addedEvent.dureeMinutes.getDuree());
         assertEquals("Salle de conférence", addedEvent.lieu.getLieu());
-        assertEquals(List.of("Bob", "Charlie"), addedEvent.participants.getParticipants());
+
+        List<String> expectedParticipants = List.of("Bob", "Charlie");
+        List<String> actualParticipants = addedEvent.participants.getParticipants().stream()
+                .map(Participant::getParticipant)
+                .toList();
+        assertEquals(expectedParticipants, actualParticipants);
     }
 
     @Test

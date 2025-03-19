@@ -22,4 +22,12 @@ public class Participants {
     public List<Participant> getParticipants() {
         return participants;
     }
+
+    public String toString(){
+        String str = "[";
+        for(Participant participant : participants){
+            str += participant.getParticipant() + ", ";
+        }
+        return str.substring(0, str.length() - 2) + "]";
+    }
 }
