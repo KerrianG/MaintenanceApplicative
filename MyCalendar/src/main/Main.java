@@ -1,5 +1,11 @@
+package main;
+
+import main.Evenement.Event;
+import main.Evenement.Participant;
+
 import java.time.LocalDateTime;
 import java.time.temporal.WeekFields;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
@@ -176,7 +182,7 @@ public class Main {
 
                         calendar.ajouterEvent("RDV_PERSONNEL", titre, utilisateur,
                                 LocalDateTime.of(annee, moisRdv, jourRdv, heure, minute), duree,
-                                "", "", 0);
+                                "", null, 0);
 
                         System.out.println("Événement ajouté.");
                         break;
@@ -199,15 +205,17 @@ public class Main {
                         int duree2 = Integer.parseInt(scanner.nextLine());
                         System.out.println("Lieu :");
                         String lieu = scanner.nextLine();
-                        
-                        String participants = utilisateur;
-                        
+
+
+                        List<Participant> participants = new ArrayList<>();
+                        participants.add(new Participant(utilisateur));
+
                         boolean encore = true;
                         System.out.println("Ajouter un participant ? (oui / non)");
                         while (scanner.nextLine().equals("oui"))
                         {
                             System.out.print("Participants : " + participants);
-                            participants += ", " + scanner.nextLine();
+                            participants.add(new Participant(scanner.nextLine()));
                         }
 
                         calendar.ajouterEvent("REUNION", titre2, utilisateur,
@@ -236,7 +244,7 @@ public class Main {
 
                         calendar.ajouterEvent("PERIODIQUE", titre3, utilisateur,
                                 LocalDateTime.of(annee3, moisRdv3, jourRdv3, heure3, minute3), 0,
-                                "", "", frequence);
+                                "", null, frequence);
 
                         System.out.println("Événement ajouté.");
                         break;
@@ -251,7 +259,7 @@ public class Main {
         }
     }
 
-    private static void afficherListe(List<Event> evenements) {
+    private static void afficherListe(Evenements evenements) {
         if (evenements.isEmpty()) {
             System.out.println("Aucun événement trouvé pour cette période.");
         } else {
