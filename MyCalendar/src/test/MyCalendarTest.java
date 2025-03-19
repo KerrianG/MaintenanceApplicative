@@ -5,6 +5,7 @@ import main.Evenement.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.net.Proxy;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class MyCalendarTest {
 
     private Event createEvent(String type, String title, String proprietaire, LocalDateTime dateDebut, int dureeMinutes,
                               String lieu, List<String> participants, int frequenceJours) {
-        TypeEvenement typeEvenement = new TypeEvenement(type);
+        TypeEvenement typeEvenement = TypeEvenementRegistre.getEventType(type);
         TitreEvenement titre = new TitreEvenement(title);
         ProprietaireEvenement proprietaireEvenement = new ProprietaireEvenement(proprietaire);
         DateEvenement dateEvenement = new DateEvenement(dateDebut);

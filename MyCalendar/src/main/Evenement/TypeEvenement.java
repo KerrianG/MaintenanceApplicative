@@ -1,14 +1,10 @@
 package main.Evenement;
 
-public class TypeEvenement {
+import java.time.LocalDateTime;
 
-    private final String type;
-
-    public TypeEvenement(String type) {
-        this.type = type;
-    }
-
-    public String getType() {
-        return type;
-    }
+public interface TypeEvenement {
+    String description(Event event);
+    boolean isConflict(Event e1, Event e2);
+    boolean isWithinPeriod(Event event, LocalDateTime debut, LocalDateTime fin);
+    String getType();
 }

@@ -1,6 +1,11 @@
 package main.Evenement;
 
 public class Event {
+
+    public static final String RDV_PERSONNEL = "RDV_PERSONNEL";
+    public static final String REUNION = "REUNION";
+    public static final String PERIODIQUE = "PERIODIQUE";
+
     public TypeEvenement type; // "RDV_PERSONNEL", "REUNION", "PERIODIQUE"
     public TitreEvenement title;
     public ProprietaireEvenement proprietaire;
@@ -23,14 +28,6 @@ public class Event {
     }
 
     public String description() {
-        String desc = "";
-        if (type.equals("RDV_PERSONNEL")) {
-            desc = "RDV : " + title.getTitre() + " à " + dateDebut.getDateDebut().toString();
-        } else if (type.equals("REUNION")) {
-            desc = "Réunion : " + title.getTitre() + " à " + lieu.getLieu() + " avec " + participants.getParticipants();
-        } else if (type.equals("PERIODIQUE")) {
-            desc = "Événement périodique : " + title.getTitre() + " tous les " + frequenceJours.getFrequence() + " jours";
-        }
-        return desc;
+        return type.description(this);
     }
 }
